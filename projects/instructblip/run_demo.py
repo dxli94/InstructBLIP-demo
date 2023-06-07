@@ -58,7 +58,7 @@ def load_model_cache(_args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Demo")
     parser.add_argument("--model-name", default="blip2_vicuna_instruct")
-    parser.add_argument("--model-type", default="vicuna7b")
+    parser.add_argument("--model-type", default="vicuna13b")
     args = parser.parse_args()
 
     image_input = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])

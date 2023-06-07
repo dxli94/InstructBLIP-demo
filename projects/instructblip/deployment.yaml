@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: instructblip-backend-1
+  name: instructblip-backend
   namespace: sfr-ns-li-d
   labels:
     app: instructblip-backend
@@ -36,7 +36,7 @@ spec:
             - ./run_demo.sh
             # - sleep infinity
           ports:
-            - containerPort: 7860
+            - containerPort: 8501
           resources:
             limits:
               nvidia.com/gpu: 2
@@ -75,5 +75,5 @@ spec:
   ports:
     # - name: blip2-gradio-server-a100-docker
     - name: instructblip-backend
-      port: 7860
-      targetPort: 7860
+      port: 8501
+      targetPort: 8501
