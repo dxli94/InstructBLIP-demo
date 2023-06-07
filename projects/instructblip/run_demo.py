@@ -128,7 +128,7 @@ if __name__ == '__main__':
 
     st.image(resized_image, use_column_width=True)
 
-    prompt = st.text_area("Prompt:", value="", height=50)
+    prompt = st.text_area("Prompt:", value=" Show me steps of making a salad using these items.", height=50)
 
     cap_button = st.button("Generate")
 
