@@ -1,0 +1,1 @@
+nohup python run_demo.sh > app.log 2>&1
