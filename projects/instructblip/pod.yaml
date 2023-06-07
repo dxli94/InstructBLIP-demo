@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: instructblip-backend-1
+  namespace: sfr-ns-li-d
+spec:
+  restartPolicy: OnFailure
+  volumes:
+    - name: sfr-home-pv-li-d
+      persistentVolumeClaim:
+        claimName: sfr-home-pvc-li-d
+    - name: sfr-share-pv-li-d
+      persistentVolumeClaim:
+        claimName: sfr-share-pvc-li-d
+    - name: dshm
+      emptyDir:
+        medium: Memory 
+  containers:
+    - name: instructblip-demo
+      image: "gcr.io/salesforce-research-internal/instructblip-demo:latest"
+      command: ["sleep", "90d"]
+      resources:
+        limits:
+          nvidia.com/gpu: 2
+          cpu: "23"
+          memory: 150G
+      volumeMounts:
+        - name: sfr-home-pv-li-d
+          mountPath: "/export/home"
+        - name: sfr-share-pv-li-d
+          mountPath: "/export/share"
+        - name: dshm
+          mountPath: /dev/shm
+  nodeSelector:
+    cloud.google.com/gke-accelerator: nvidia-tesla-a100        
+  tolerations:
+  - key: "gpu_num"
+    operator: "Equal"
+    value: "2"
+    # value: "4"
+    effect: "NoSchedule"
