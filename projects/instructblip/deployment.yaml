@@ -21,6 +21,9 @@ spec:
         - name: sfr-home-pv-li-d
           persistentVolumeClaim:
             claimName: sfr-home-pvc-li-d
+        - name: sfr-share-pv-li-d
+          persistentVolumeClaim:
+            claimName: sfr-share-pvc-li-d
         - name: dshm
           emptyDir:
             medium: Memory
@@ -28,9 +31,9 @@ spec:
         - name: instructblip-backend
           image: "gcr.io/salesforce-research-internal/instructblip-demo:latest"
           command: # ["python app.py >> file.txt 2>&1"]
-            # - sleep infinity
             - /bin/bash
             - -c
+            # - sleep infinity
             - ./run_demo.sh
           ports:
             - containerPort: 7860
@@ -45,6 +48,8 @@ spec:
           volumeMounts:
             - name: sfr-home-pv-li-d
               mountPath: "/export/home"
+            - name: sfr-share-pv-li-d
+              mountPath: "/export/share"
             - name: dshm
               mountPath: /dev/shm
       nodeSelector: 
