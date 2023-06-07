@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
     print('Loading model done!')
 
-    def inference(image, prompt, min_len, max_len, beam_size, len_penalty, repetition_penalty, top_p, decoding_method, modeltype):
+    def inference(image, prompt, min_len, max_len, beam_size, len_penalty, repetition_penalty, top_p, decoding_method):
         use_nucleus_sampling = decoding_method == "Nucleus sampling"
         print(image, prompt, min_len, max_len, beam_size, len_penalty, repetition_penalty, top_p, use_nucleus_sampling)
         image = vis_processors["eval"](image).unsqueeze(0).to(device)
