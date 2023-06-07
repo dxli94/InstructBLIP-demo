@@ -116,4 +116,9 @@ if __name__ == '__main__':
         inputs=[image_input, prompt_textbox, min_len, max_len, beam_size, len_penalty, repetition_penalty, top_p, sampling],
         outputs="text",
         allow_flagging="never",
+        examples=[
+            ["images/vegetables.png", "Show me steps of making a salad using these ingredients.", 1, 250, 5, 1, 1, 0.9, "Nucleus sampling"],
+            ["images/cyborg-dog.png", "What makes this dog special?", 1, 250, 5, 1, 1, 0.9, "Nucleus sampling"],
+            ["images/debris.png", "What could have happened based on the current scene?", 1, 250, 5, 1, 1, 0.9, "Nucleus sampling"],
+        ]
     ).launch()
