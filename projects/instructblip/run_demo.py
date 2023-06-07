@@ -141,4 +141,4 @@ if __name__ == '__main__':
         with st.spinner('Generating...'):
             output = inference(resized_image, prompt, min_len, max_len, beam_size, len_penalty, repetition_penalty, top_p, sampling)
 
-    st.text_area(label="Response",value=output, height=100)
+    st.text_area(label="Response",value=output, height=300)
