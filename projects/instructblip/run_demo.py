@@ -1,79 +1,45 @@
-import gradio as gr
 from lavis.models import load_model_and_preprocess
 import torch
 import argparse
+from PIL import Image
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Demo")
-    parser.add_argument("--model-name", default="blip2_vicuna_instruct")
-    parser.add_argument("--model-type", default="vicuna7b")
-    args = parser.parse_args()
+import streamlit as st
 
-    image_input = gr.Image(type="pil")
 
-    min_len = gr.Slider(
-        minimum=1,
-        maximum=50,
-        value=1,
-        step=1,
-        interactive=True,
-        label="Min Length",
+def load_demo_image():
+    img_url = "images/vegetables.png"
+
+    raw_image = Image.open(img_url).convert("RGB")
+    return raw_image
+
+
+def inference(image, prompt, min_len, max_len, beam_size, len_penalty, repetition_penalty, top_p, decoding_method):
+    use_nucleus_sampling = decoding_method == "Nucleus sampling"
+    print(image, prompt, min_len, max_len, beam_size, len_penalty, repetition_penalty, top_p, use_nucleus_sampling)
+    image = vis_processors["eval"](image).unsqueeze(0).to(device)
+
+    samples = {
+        "image": image,
+        "prompt": prompt,
+    }
+
+    output = model.generate(
+        samples,
+        length_penalty=float(len_penalty),
+        repetition_penalty=float(repetition_penalty),
+        num_beams=beam_size,
+        max_length=max_len,
+        min_length=min_len,
+        top_p=top_p,
+        use_nucleus_sampling=use_nucleus_sampling,
     )
 
-    max_len = gr.Slider(
-        minimum=10,
-        maximum=500,
-        value=250,
-        step=5,
-        interactive=True,
-        label="Max Length",
-    )
-
-    sampling = gr.Radio(
-        choices=["Beam search", "Nucleus sampling"],
-        value="Beam search",
-        label="Text Decoding Method",
-        interactive=True,
-    )
-
-    top_p = gr.Slider(
-        minimum=0.5,
-        maximum=1.0,
-        value=0.9,
-        step=0.1,
-        interactive=True,
-        label="Top p",
-    )
-
-    beam_size = gr.Slider(
-        minimum=1,
-        maximum=10,
-        value=5,
-        step=1,
-        interactive=True,
-        label="Beam Size",
-    )
-
-    len_penalty = gr.Slider(
-        minimum=-1,
-        maximum=2,
-        value=1,
-        step=0.2,
-        interactive=True,
-        label="Length Penalty",
-    )
-
-    repetition_penalty = gr.Slider(
-        minimum=-1,
-        maximum=3,
-        value=1,
-        step=0.2,
-        interactive=True,
-        label="Repetition Penalty",
-    )
+    return output[0]
 
 
-    prompt_textbox = gr.Textbox(label="Prompt:", placeholder="prompt", lines=2)
+@st.cache_resource
+def load_model_cache(_args):
+    args = _args
 
     device = torch.device("cuda") if torch.cuda.is_available() else "cpu"
 
@@ -85,40 +51,94 @@ if __name__ == '__main__':
         is_eval=True,
         device=device,
     )
+    
+    return model, vis_processors, device
 
-    print('Loading model done!')
 
-    def inference(image, prompt, min_len, max_len, beam_size, len_penalty, repetition_penalty, top_p, decoding_method):
-        use_nucleus_sampling = decoding_method == "Nucleus sampling"
-        print(image, prompt, min_len, max_len, beam_size, len_penalty, repetition_penalty, top_p, use_nucleus_sampling)
-        image = vis_processors["eval"](image).unsqueeze(0).to(device)
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Demo")
+    parser.add_argument("--model-name", default="blip2_vicuna_instruct")
+    parser.add_argument("--model-type", default="vicuna7b")
+    args = parser.parse_args()
 
-        samples = {
-            "image": image,
-            "prompt": prompt,
-        }
+    image_input = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
 
-        output = model.generate(
-            samples,
-            length_penalty=float(len_penalty),
-            repetition_penalty=float(repetition_penalty),
-            num_beams=beam_size,
-            max_length=max_len,
-            min_length=min_len,
-            top_p=top_p,
-            use_nucleus_sampling=use_nucleus_sampling,
-        )
+    min_len = st.sidebar.slider(
+        "Min Length",
+        min_value=1,
+        max_value=50,
+        value=1,
+        step=1
+    )
 
-        return output[0]
+    max_len = st.sidebar.slider(
+        "Max Length",
+        min_value=10,
+        max_value=500,
+        value=250,
+        step=5
+    )
 
-    gr.Interface(
-        fn=inference,
-        inputs=[image_input, prompt_textbox, min_len, max_len, beam_size, len_penalty, repetition_penalty, top_p, sampling],
-        outputs="text",
-        allow_flagging="never",
-        examples=[
-            ["images/vegetables.png", "Show me steps of making a salad using these ingredients.", 1, 250, 5, 1, 1, 0.9, "Nucleus sampling"],
-            ["images/cyborg-dog.png", "What makes this dog special?", 1, 250, 5, 1, 1, 0.9, "Nucleus sampling"],
-            ["images/debris.png", "What could have happened based on the current scene?", 1, 250, 5, 1, 1, 0.9, "Nucleus sampling"],
-        ]
-    ).launch()
+    sampling = st.sidebar.radio(
+        "Text Decoding Method",
+        options=["Beam search", "Nucleus sampling"],
+        index=0
+    )
+
+    top_p = st.sidebar.slider(
+        "Top p",
+        min_value=0.5,
+        max_value=1.0,
+        value=0.9,
+        step=0.1
+    )
+
+    beam_size = st.sidebar.slider(
+        "Beam Size",
+        min_value=1,
+        max_value=10,
+        value=5,
+        step=1
+    )
+
+    len_penalty = st.sidebar.slider(
+        "Length Penalty",
+        min_value=-1.0,
+        max_value=2.0,
+        value=1.0,
+        step=0.2
+    )
+
+    repetition_penalty = st.sidebar.slider(
+        "Repetition Penalty",
+        min_value=-1.0,
+        max_value=3.0,
+        value=1.0,
+        step=0.2
+    )
+
+    if image_input is not None:
+        raw_img = Image.open(image_input).convert("RGB")
+    else:
+        raw_img = load_demo_image()
+
+    w, h = raw_img.size
+    scaling_factor = 720 / w
+    resized_image = raw_img.resize((int(w * scaling_factor), int(h * scaling_factor)))
+
+    st.image(resized_image, use_column_width=True)
+
+    prompt = st.text_area("Prompt:", value="", height=50)
+
+    cap_button = st.button("Generate")
+
+    output = ""
+    if cap_button:
+        with st.spinner('Loading model...'):
+            model, vis_processors, device = load_model_cache(args)
+            print('Loading model done!')
+        
+        with st.spinner('Generating...'):
+            output = inference(resized_image, prompt, min_len, max_len, beam_size, len_penalty, repetition_penalty, top_p, sampling)
+
+    st.text_area(label="Response",value=output, height=100)
