@@ -25,7 +25,7 @@ WORKDIR /InstructBLIP-demo
 
 RUN pip install -e .
 
-ENV PYTHONPATH="${PYTHONPATH}:./:/InstructBLIP-demo/projects/instructblip"
+ENV PYTHONPATH="${PYTHONPATH}:./:/InstructBLIP-demo/"
 
 # change working directory
 WORKDIR /InstructBLIP-demo/projects/instructblip
