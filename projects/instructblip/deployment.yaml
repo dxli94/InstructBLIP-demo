@@ -33,8 +33,8 @@ spec:
           command: # ["python app.py >> file.txt 2>&1"]
             - /bin/bash
             - -c
-            # - sleep infinity
             - ./run_demo.sh
+            # - sleep infinity
           ports:
             - containerPort: 7860
           resources:
