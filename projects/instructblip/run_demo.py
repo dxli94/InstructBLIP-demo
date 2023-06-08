@@ -158,7 +158,7 @@ if __name__ == '__main__':
     )
 
     repetition_penalty = st.sidebar.slider(
-        "Repetition Penalty: increase more less repetition",
+        "Repetition Penalty: increase for less repetition",
         min_value=-1.0,
         max_value=3.0,
         value=1.0,
