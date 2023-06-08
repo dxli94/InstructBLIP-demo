@@ -24,6 +24,9 @@ RUN pip install streamlit
 RUN git clone https://github.com/dxli94/InstructBLIP-demo.git /InstructBLIP-demo
 WORKDIR /InstructBLIP-demo
 
+# pull new changes
+RUN git pull
+
 RUN pip install -e .
 
 ENV PYTHONPATH="${PYTHONPATH}:./:/InstructBLIP-demo/"
