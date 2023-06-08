@@ -17,7 +17,8 @@ RUN apt -y install openssh-server openssh-client
 # RUN pip install salesforce-lavis
 # RUN pip install flask
 # RUN pip install -U flask-cors
-RUN pip install gradio
+# RUN pip install gradio
+RUN pip install streamlit
 
 # COPY blip2_backend /app
 RUN git clone https://github.com/dxli94/InstructBLIP-demo.git /InstructBLIP-demo

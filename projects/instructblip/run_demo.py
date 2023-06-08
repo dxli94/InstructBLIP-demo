@@ -82,7 +82,7 @@ def set_seed(seed):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Demo")
     parser.add_argument("--model-name", default="blip2_vicuna_instruct")
-    parser.add_argument("--model-type", default="vicuna7b")
+    parser.add_argument("--model-type", default="vicuna13b")
     args = parser.parse_args()
 
     st.markdown(
@@ -176,7 +176,7 @@ if __name__ == '__main__':
 
     st.image(resized_image, width=360)
 
-    prompt = st.text_area("Prompt:", value="Show me steps of making a salad using these items.", height=50)
+    prompt = st.text_area("Prompt:", value=" Show me steps of making a salad using these items.", height=50)
 
     cap_button = st.button("Generate")
 
@@ -193,4 +193,4 @@ if __name__ == '__main__':
                 seed=seed
             )
 
-    st.text_area(label="Response",value=output, height=100)
+    st.text_area(label="Response",value=output, height=300)
