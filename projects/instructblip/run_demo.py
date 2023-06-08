@@ -82,7 +82,7 @@ def set_seed(seed):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Demo")
     parser.add_argument("--model-name", default="blip2_vicuna_instruct")
-    parser.add_argument("--model-type", default="vicuna13b")
+    parser.add_argument("--model-type", default="vicuna7b")
     args = parser.parse_args()
 
     st.markdown(
